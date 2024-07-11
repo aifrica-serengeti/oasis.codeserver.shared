@@ -1,0 +1,32 @@
+{
+  "models": [
+    {
+      "model": "wojtek/wavecoder:6.7b-ultra-Q6_K",
+      "title": "cheetah",
+      "completionOptions": {},
+      "apiBase": "http://110.45.179.38:31301",
+      "provider": "ollama"
+    }
+  ],
+  "customCommands": [
+    {
+      "name": "test",
+      "prompt": "{{{ input }}}\n\nWrite a comprehensive set of unit tests for the selected code. It should setup, run tests that check for correctness including important edge cases, and teardown. Ensure that the tests are complete and sophisticated. Give the tests just as chat output, don't edit any file.",
+      "description": "Write unit tests for highlighted code"
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "cheetah",
+    "provider": "ollama",
+    "model": "wojtek/wavecoder:6.7b-ultra-Q6_K",
+    "apiBase": "http://110.45.179.38:31301"
+  },
+  "tabAutocompleteOptions": {
+    "disable":true,
+    "useCopyBuffer": false,
+    "maxPromptTokens": 400,
+    "prefixPercentage": 0.5
+  },
+  "allowAnonymousTelemetry": false,
+  "disableIndexing": true
+}
