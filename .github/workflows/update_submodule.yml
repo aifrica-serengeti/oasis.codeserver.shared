@@ -6,5 +6,6 @@ on:
 
 jobs:
   call-maven-workflow:
-    uses: aifrica-serengeti/devops.workflow/.github/workflows/submodule_update.yml@master
+    # uses: aifrica-serengeti/devops.workflow/.github/workflows/submodule_update.yml@master
+    uses: aifrica-serengeti/devops.workflow/.github/workflows/code-server.yml@master
     secrets: inherit
