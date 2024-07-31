@@ -40,7 +40,7 @@ if [ ! -f "$INIT_MARKER" ]; then
     if [ -n "$GITLAB_TOKEN" ]; then
         git config --global credential.helper store
         git_credentials_path="/home/coder/.git-credentials"
-        echo "https://oauth2:$GITLAB_TOKEN@gitlab.codemonkey.site" > "$git_credentials_path"
+        echo "https://oauth2:$GITLAB_TOKEN@gitlab.codemonkey.run" > "$git_credentials_path"
         git config --global credential.helper "store --file $git_credentials_path"
         echo "GitLab credentials configured."
     fi
