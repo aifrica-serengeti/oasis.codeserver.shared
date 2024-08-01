@@ -10,8 +10,22 @@ fi
 # Check if the initialization marker file exists
 if [ ! -f "$INIT_MARKER" ]; then
     echo "Initializing for the first time..."
-    code-server --install-extension Continue.continue
-    code-server --install-extension rangav.vscode-thunder-client
+    
+    if [ "$EXTENSION_CONTINUE" == "true" ]; then
+        code-server --install-extension Continue.continue
+
+        # Ensure the directory exists
+        mkdir -p /home/coder/.continue
+
+        # Copy the contents of /config.json to /home/coder/.continue/config.json
+        cp -f /config.json /home/coder/.continue/config.json
+        echo "Configuration file updated."
+    fi
+    
+    if [ "$EXTENSION_THUNDER_CLIENT" == "true" ]; then
+        code-server --install-extension rangav.vscode-thunder-client
+    fi
+
     if [ -d /opt/venv ]; then
         echo "Python is installed. Installing Python extensions..."
         cp -r /opt/venv /home/coder/venv
@@ -44,13 +58,6 @@ if [ ! -f "$INIT_MARKER" ]; then
         git config --global credential.helper "store --file $git_credentials_path"
         echo "GitLab credentials configured."
     fi
-
-    # Ensure the directory exists
-    mkdir -p /home/coder/.continue
-
-    # Copy the contents of /config.json to /home/coder/.continue/config.json
-    cp -f /config.json /home/coder/.continue/config.json
-    echo "Configuration file updated."
 
     # Create the initialization marker file
     touch $INIT_MARKER
