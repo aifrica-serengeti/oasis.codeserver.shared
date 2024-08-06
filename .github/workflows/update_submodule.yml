@@ -1,10 +1,10 @@
-name: update_submodule
+# name: update_submodule
 
-on:
-  push:
-    branches: [ "master" ]
+# on:
+#   push:
+#     branches: [ "master" ]
 
-jobs:
-  call-maven-workflow:
-    uses: aifrica-serengeti/devops.workflow/.github/workflows/submodule_update.yml@master
-    secrets: inherit
+# jobs:
+#   call-maven-workflow:
+#     uses: aifrica-serengeti/devops.workflow/.github/workflows/submodule_update.yml@master
+#     secrets: inherit
