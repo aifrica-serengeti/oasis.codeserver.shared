@@ -9,7 +9,7 @@ if [ ! -f "$INIT_MARKER" ]; then
     echo "Initializing for the first time..."
     
     # Copy the contents of /coder to /home/coder
-    sudo cp -r /coder/* /home/coder/
+    sudo rsync -av /coder/ /home/coder/
     sudo chown -R coder:coder /home/coder/
     echo "Copied initial files to /home/coder."
     
