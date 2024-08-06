@@ -62,9 +62,9 @@ if [ -d /usr/local/go/bin ]; then
         source /home/coder/.profile
 fi
 
-if [ -d /home/coder/venv ]; then
-    echo "source /home/coder/venv/bin/activate" >> /home/coder/.bashrc
-    source /home/coder/venv/bin/activate
+if [ -d /opt/venv ]; then
+    echo "source /opt/venv/bin/activate" >> /home/coder/.bashrc
+    source /opt/venv/bin/activate
     echo "venv activated!"
 fi
 
