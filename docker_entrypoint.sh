@@ -12,6 +12,16 @@ if [ ! -f "$INIT_MARKER" ]; then
     sudo rsync -av /coder/ /home/coder/
     sudo chown -R coder:coder /home/coder/
     echo "Copied initial files to /home/coder."
+
+    # Copy config.json to /home/coder/.continue/config.json
+    if [ -f /config.json ]; then
+        sudo mkdir -p /home/coder/.continue
+        sudo cp /config.json /home/coder/.continue/config.json
+        sudo chown coder:coder /home/coder/.continue/config.json
+        echo "Copied /config.json to /home/coder/.continue/config.json."
+    else
+        echo "/config.json not found. Skipping copy."
+    fi
     
     sudo touch $INIT_MARKER
     echo "Initialization complete."
