@@ -78,4 +78,4 @@ if [ -d /opt/venv ]; then
     echo "venv activated!"
 fi
 
-exec code-server --bind-addr 0.0.0.0:$PORT --app-name "Oasis" --base-path /proxy/$SERVER_PORT --welcome-text "환영합니다 ${USER_NAME}! 설정하신 패스워드를 입력해주세요."
+exec code-server --bind-addr 0.0.0.0:$PORT --app-name "Oasis" --welcome-text "환영합니다 ${USER_NAME}! 설정하신 패스워드를 입력해주세요."
