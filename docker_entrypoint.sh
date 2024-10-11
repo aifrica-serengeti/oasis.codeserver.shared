@@ -4,6 +4,7 @@ USERNAME=${USER_NAME:-"사용자"}
 PORT=${PORT:-65535}
 INIT_MARKER=/home/coder/.initialized
 
+
 # Check if the initialization marker file exists
 if [ ! -f "$INIT_MARKER" ]; then
     echo "Initializing for the first time..."
