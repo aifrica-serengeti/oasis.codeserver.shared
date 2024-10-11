@@ -1,9 +1,9 @@
 {
   "models": [
     {
-      "title": "Codestral",
-      "model": "codestral:latest",
-      "contextLength": 8192,
+      "title": "qwen2.5-coder",
+      "model": "qwen2.5-coder:7b-instruct-q8_0",
+      "contextLength": 32768,
       "apiBase": "http://192.168.1.136:11434",
       "provider": "ollama"
     }
