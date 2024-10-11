@@ -17,7 +17,7 @@ if [ ! -f "$INIT_MARKER" ]; then
     echo "Initialization complete."
 fi
 
-# 환경 변수로부터 값을 읽어서 JSON 파일 수정
+# 환경 변수로부터 값을 읽어서 JSON 파일 수정.
 echo "Modifying JSON with environment variables..."
 OLLAMA_HOST=${OLLAMA_HOST:-"http://default-host-value"}
 OLLAMA_MODEL=${OLLAMA_MODEL:-"qwen2.5-coder:7b-instruct-q8_0"}
