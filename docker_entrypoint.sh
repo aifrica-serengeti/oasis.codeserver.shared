@@ -23,7 +23,7 @@ echo "Modifying JSON with environment variables..."
 OLLAMA_HOST=${OLLAMA_HOST:-"http://default-host-value"}
 OLLAMA_MODEL=${OLLAMA_MODEL:-"qwen2.5-coder:7b-instruct-q8_0"}
 
-# JSON 파일의 내용을 환경 변수에 따라 동적으로 수정
+# JSON 파일의 내용을 환경 변수에 따라 동적으로 수정.
 cat <<EOF > /home/coder/.continue/config.json
 {
   "models": [
