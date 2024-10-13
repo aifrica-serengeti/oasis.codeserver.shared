@@ -1,11 +1,62 @@
-name: update_submodule
+name: Update Submodules and Push
 
+# master 브랜치에 대한 push 이벤트 발생 시 트리거
 on:
   push:
     branches: [ "master" ]
 
 jobs:
-  call-maven-workflow:
-    uses: aifrica-serengeti/devops.workflow/.github/workflows/submodule_update.yml@master
-    secrets: inherit
+  update-submodule:
+    runs-on: ubuntu-latest
 
+    env:
+      GIT_COMMITTER_NAME: "dldmsgh333"
+      GIT_COMMITTER_EMAIL: "eh.lee@aifrica.co.kr"
+    
+    steps:
+      # 1. 서브모듈을 포함해서 현재 프로젝트 체크아웃
+      - name: Checkout Submodule Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          token: ${{ secrets.PAT }}
+
+      # 2. SSH 설정
+      - name: Setup SSH for cloning and pushing
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      # 3. Git 설정
+      - name: Set up Git
+        run: |
+          git config --global user.email "${{ env.GIT_COMMITTER_EMAIL }}"
+          git config --global user.name "${{ env.GIT_COMMITTER_NAME }}"
+          git config --global url.https://${{ secrets.PAT }}@github.com/.insteadOf https://github.com/
+
+      # 4. 각 프로젝트를 클론하고 서브모듈을 업데이트
+      - name: Update Submodules
+        run: |
+          repositories=("oasis.codeserver.node" "oasis.codeserver.jdk" "oasis.codeserver.python" "oasis.codeserver.golang" "oasis.codeserver.default")
+          
+          for repo in "${repositories[@]}"; do
+              git clone git@github.com:aifrica-serengeti/$repo.git
+              cd $repo
+              git submodule update --init --recursive
+              git submodule update --remote --merge
+              git add .
+              git commit -m "Update submodule to latest commit"
+              git push git@github.com:aifrica-serengeti/$repo.git
+              cd ..
+          done
+
+      # 5. Slack 알림 전송
+      - name: Send Slack Notification
+        uses: aifrica-serengeti/devops.workflow/.github/slack-notify@master
+        if: always()
+        with:
+          PAT: ${{ secrets.PAT }}
+          status: ${{ job.status }}
+          slack_incoming_url: ${{ secrets.SLACK_CI_WEBHOOK_URI }}
