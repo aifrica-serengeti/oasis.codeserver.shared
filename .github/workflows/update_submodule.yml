@@ -1,62 +1,10 @@
-name: Update Submodules and Push Locally
+name: update_submodule
 
-# master 브랜치에 대한 push 이벤트 발생 시 자동으로 트리거
 on:
-  push:
-    branches: [ "master" ]
+push:
+branches: [ "master" ]
 
 jobs:
-  update-submodule:
-    runs-on: ubuntu-latest
-
-    env:
-      GIT_COMMITTER_NAME: "dldmsgh333"
-      GIT_COMMITTER_EMAIL: "eh.lee@aifrica.co.kr"
-    
-    steps:
-      # 1. 서브모듈을 포함해서 현재 프로젝트 체크아웃
-      - name: Checkout Submodule Repository
-        uses: actions/checkout@v2
-        with:
-          submodules: true             # 서브모듈을 포함하여 가져옴
-          token: ${{ secrets.PAT }}     # GitHub Personal Access Token (PAT)
-
-      # 2. SSH 키 설정
-      - name: Setup SSH for cloning and pushing
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      # 3. Git 설정
-      - name: Set up Git
-        run: |
-          git config --global user.email "${{ env.GIT_COMMITTER_EMAIL }}"
-          git config --global user.name "${{ env.GIT_COMMITTER_NAME }}"
-
-      # 4. 서브모듈 업데이트 및 푸시
-      #
-      # 필요한 리포지토리를 순회하고 클론한 후 서브모듈을 업데이트합니다.
-      - name: Update Submodules in Multiple Repositories
-        run: |
-          repositories=("oasis.codeserver.node" "oasis.codeserver.jdk" "oasis.codeserver.python" "oasis.codeserver.golang" "oasis.codeserver.default")
-          
-          for repo in "${repositories[@]}"; do
-              git clone git@github.com:aifrica-serengeti/$repo.git
-              cd $repo
-              git submodule update --init --recursive                  # 서브모듈 초기화 및 업데이트
-              git submodule update --remote --merge                    # 서브모듈 원격 업데이트 및 머지
-              git add .                                                # 변경 사항 추가
-              git commit -m "Update submodule to latest commit"        # 커밋 메시지
-              git push git@github.com:aifrica-serengeti/$repo.git      # 원격 저장소로 푸시
-              cd ..
-          done
-
-      # 5. Slack 알림 전송
-      - name: Send Slack Notification
-        uses: slackapi/slack-github-action@v1.23.0  # Slack 알림 플러그인 활용
-        if: always()
-        with:
-          status: ${{ job.status }}
-          slack_webhook_url: ${{ secrets.SLACK_CI_WEBHOOK_URI }}       # Slack Webhook URL
+call-maven-workflow:
+uses: aifrica-serengeti/devops.workflow/.github/workflows/submodule_update.yml@master
+secrets: inherit
