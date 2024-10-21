@@ -4,11 +4,10 @@ USERNAME=${USER_NAME:-"사용자"}
 PORT=${PORT:-65535}
 INIT_MARKER=/home/coder/.initialized
 
-
 # Check if the initialization marker file exists
 if [ ! -f "$INIT_MARKER" ]; then
     echo "Initializing for the first time..."
-    
+
     # Copy the contents of /coder to /home/coder
     sudo rsync -av /coder/ /home/coder/
     sudo chown -R coder:coder /home/coder/
@@ -23,8 +22,19 @@ echo "Modifying JSON with environment variables..."
 OLLAMA_HOST=${OLLAMA_HOST:-"http://default-host-value"}
 OLLAMA_MODEL=${OLLAMA_MODEL:-"qwen2.5-coder:7b-instruct-q8_0"}
 
-# JSON 파일의 내용을 환경 변수에 따라 동적으로 수정..
-cat <<EOF > /home/coder/.continue/config.json
+# JSON 파일 경로가 없을 경우, 디렉토리를 생성.
+CONFIG_DIR="/home/coder/.continue"
+CONFIG_FILE="$CONFIG_DIR/config.json"
+
+# 경로가 없다면 경로를 생성.
+if [ ! -d "$CONFIG_DIR" ]; then
+    echo "Config directory does not exist. Creating $CONFIG_DIR..."
+    mkdir -p "$CONFIG_DIR"
+    echo "Created $CONFIG_DIR."
+fi
+
+# JSON 파일의 내용을 환경 변수에 따라 동적으로 수정.
+cat <<EOF > "$CONFIG_FILE"
 {
   "models": [
     {
@@ -126,7 +136,7 @@ fi
 if [ -n "$GITLAB_TOKEN" ]; then
     git config --global credential.helper store
     git_credentials_path="/home/coder/.git-credentials"
-    echo "https://oauth2:$GITLAB_TOKEN@gitlab.codemonkey.site" | sudo tee "$git_credentials_path"
+    echo "https://oauth2:$GITLAB_TOKEN@$GITLAB_DOMAIN" | sudo tee "$git_credentials_path"
     git config --global credential.helper "store --file $git_credentials_path"
     echo "GitLab credentials configured."
 fi
@@ -154,10 +164,11 @@ fi
 
 # Set up Go environment
 if [ -d /usr/local/go/bin ]; then
-        echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/coder/.profile
-        source /home/coder/.profile
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/coder/.profile
+    source /home/coder/.profile
 fi
 
+# Activate Python virtual environment
 if [ -d /opt/venv ]; then
     echo "source /opt/venv/bin/activate" >> /home/coder/.bashrc
     source /opt/venv/bin/activate
@@ -165,4 +176,4 @@ if [ -d /opt/venv ]; then
 fi
 
 # Start code-server
-exec code-server --bind-addr 0.0.0.0:$PORT --proxy-domain ${PROXY_DOMAIN} --app-name "Serengeti Functions" --welcome-text "환영합니다 ${USER_NAME}! 클립보드에 복사된 패스워드를 입력해주세요.(Ctrl + V)"
+exec code-server --bind-addr 0.0.0.0:$PORT --app-name "Serengeti Functions" --welcome-text "환영합니다 ${USER_NAME}! 클립보드에 복사된 패스워드를 입력해주세요.(Ctrl + V)"
