@@ -142,7 +142,11 @@ if [ -n "$GITLAB_TOKEN" ]; then
 fi
 
 if [ -n "$GITLAB_URL" ] && [ ! -d "/home/coder/$PROJECT_NAME" ]; then
-    git clone "$GITLAB_URL" /home/coder/"$PROJECT_NAME" || { echo "Failed to clone from $GITLAB_URL"; exit 1; }
+    git clone "$GITLAB_URL" /home/coder/"$PROJECT_NAME" || {
+        echo "Failed to clone from $GITLAB_URL. Cleaning up..."
+        sudo rm -rf "/home/coder/$PROJECT_NAME"  # Clone 실패한 디렉토리 삭제
+        exit 1
+    }
 elif [ -d "/home/coder/$PROJECT_NAME" ]; then
     echo "Repository '$PROJECT_NAME' already cloned. Skipping clone."
 else
