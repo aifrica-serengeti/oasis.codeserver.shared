@@ -141,14 +141,26 @@ if [ -n "$GITLAB_TOKEN" ]; then
     echo "GitLab credentials configured."
 fi
 
+# GitLab URL을 확인하고, 디렉토리가 없는 경우 클론 시도
 if [ -n "$GITLAB_URL" ] && [ ! -d "/home/coder/$PROJECT_NAME" ]; then
-    git clone "$GITLAB_URL" /home/coder/"$PROJECT_NAME" || {
+    echo "Cloning repository from $GITLAB_URL..."
+    
+    # 만약 디렉토리가 남아 있으면 삭제하고 클론 시도
+    if [ -d "/home/coder/$PROJECT_NAME" ]; then
+        echo "Cleaning up existing directory..."
+        sudo rm -rf "/home/coder/$PROJECT_NAME"
+    fi
+
+    # Git 클론 시도
+    if git clone "$GITLAB_URL" /home/coder/"$PROJECT_NAME"; then
+        echo "Repository cloned successfully."
+    else
         echo "Failed to clone from $GITLAB_URL. Cleaning up..."
-        sudo rm -rf "/home/coder/$PROJECT_NAME"  # Clone 실패한 디렉토리 삭제
+        sudo rm -rf "/home/coder/$PROJECT_NAME"
         exit 1
-    }
+    fi
 elif [ -d "/home/coder/$PROJECT_NAME" ]; then
-    echo "Repository '$PROJECT_NAME' already cloned. Skipping clone."
+    echo "Repository '$PROJECT_NAME' already exists. Skipping clone."
 else
     echo "GITLAB_URL not set. Skipping clone."
 fi
